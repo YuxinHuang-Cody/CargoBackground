@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/js/jquery/2.0.0/jquery.min.js"></script>
+    <link href="/css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap/3.3.6/bootstrap.min.js"></script>
+    <script src="/js/vue/2.5.16/vue.min.js"></script>
+    <script src="/js/axios/0.17.1/axios.min.js"></script>
+    <script src="/js/moment/2.22.2/moment.js"></script> <!-- vue.js 格式化日期用的 -->
+    <link href="/css/back/style.css" rel="stylesheet">
+    <link href="/css/fore/style.css" rel="stylesheet">
+    <script>
+        $(function(){
+            var left = window.innerWidth/2-162;
+            $("div.orderErrorMessageDiv").css("left",left);
+        })
+    </script>
+</head>
+<body>
+<script>
+    $(function(){
+        var data4Vue = {
+            uri:'addOrder',
+            beans: [],
+            bean: {},
+            pagination:{},
+            file: null
+        };
+
+        //ViewModel
+        var vue = new Vue({
+            el: '#workingArea',
+            data: data4Vue,
+            methods: {
+                list:function(start){
+                    var url =  "order?start="+start;
+                    axios.get(url).then(function(response) {
+                        vue.pagination = response.data;
+                        vue.beans = response.data.content	;
+                    });
+                },
+                add: function () {
+                    if(this.bean.deliveryTime==null){
+                        $("span.errorMessage").html("交付时间不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.company==null){
+                        $("span.errorMessage").html("公司不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.operator==null){
+                        $("span.errorMessage").html("业务员不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.pickUpAddress==null){
+                        $("span.errorMessage").html("提货地址不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.shippingAddress==null){
+                        $("span.errorMessage").html("送货地址不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.warehousingNumber==null){
+                        $("span.errorMessage").html("入仓单号不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.totalFee==null){
+                        $("span.errorMessage").html("总费用不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.driver==null){
+                        $("span.errorMessage").html("司机不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.cargoInformation==null){
+                        $("span.errorMessage").html("货物信息不能为空");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(this.bean.basicFee==null){
+                        this.bean.basicFee=0;
+                    }
+                    if(this.bean.carryFee==null){
+                        this.bean.carryFee=0;
+                    }
+                    if(this.bean.otherFee==null){
+                        this.bean.otherFee=0;
+                    }
+                    if(this.bean.weighFee==null){
+                        this.bean.weighFee=0;
+                    }
+                    if(this.bean.expresswayFee==null){
+                        this.bean.expresswayFee=0;
+                    }
+                    if(this.bean.overnightFee==null){
+                        this.bean.overnightFee=0;
+                    }
+                    var regNumber= /^[0-9]+([\.][0-9]{1,3})?$/;
+                    if(!regNumber.test(this.bean.totalFee)){
+                        $("span.errorMessage").html("总费用需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(!regNumber.test(this.bean.basicFee)){
+                        $("span.errorMessage").html("基础费用需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(!regNumber.test(this.bean.expresswayFee)){
+                        $("span.errorMessage").html("高速费需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(!regNumber.test(this.bean.overnightFee)){
+                        $("span.errorMessage").html("押夜费需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(!regNumber.test(this.bean.carryFee)){
+                        $("span.errorMessage").html("搬运费需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(!regNumber.test(this.bean.weighFee)){
+                        $("span.errorMessage").html("过磅费需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    if(!regNumber.test(this.bean.otherFee)){
+                        $("span.errorMessage").html("其它费用需要为数字");
+                        $("div.orderErrorMessageDiv").css("visibility","visible");
+                        return;
+                    }
+                    var url = this.uri;
+                    //axios.js 上传文件要用 formData 这种方式
+                    var formData = new FormData();
+                    formData.append("deliveryTime", this.bean.deliveryTime);
+                    formData.append("company", this.bean.company);
+                    formData.append("operator", this.bean.operator);
+                    formData.append("dispatcher", this.bean.dispatcher);
+                    formData.append("pickUpAddress", this.bean.pickUpAddress);
+                    formData.append("shippingAddress", this.bean.shippingAddress);
+                    formData.append("warehousingNumber", this.bean.warehousingNumber);
+                    formData.append("companyOrderNumber", this.bean.companyOrderNumber);
+                    formData.append("totalFee", this.bean.totalFee);
+                    formData.append("expresswayFee", this.bean.expresswayFee);
+                    formData.append("overnightFee", this.bean.overnightFee);
+                    formData.append("basicFee", this.bean.basicFee);
+                    formData.append("carryFee", this.bean.carryFee);
+                    formData.append("weighFee", this.bean.weighFee);
+                    formData.append("otherFee", this.bean.otherFee);
+                    formData.append("driver", this.bean.driver);
+                    formData.append("cargoInformation", this.bean.cargoInformation);
+                    formData.append("remarks", this.bean.remarks);
+                    axios.post(url,formData).then(function(response){
+                        location.href="home";
+                    });
+                }
+            }
+        });
+    });
+    $(function(){
+        var left = window.innerWidth/2-162;
+        $("div.orderErrorMessageDiv").css("left",left);
+    })
+</script>
+<div id="workingArea">
+    <div class="navitagorDiv" th:fragment="html">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+            <a class="navbar-brand" href="home">主页</a>
+            <a class="navbar-brand" href="editOrder">单号录入</a>
+            <!--        <a class="navbar-brand" href="admin_user_list">用户管理</a>-->
+            <!--        <a class="navbar-brand" href="admin_order_list">订单管理</a>-->
+        </nav>
+    </div>
+    <div class="orderErrorMessageDiv">
+        <div class="alert alert-danger" >
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+            <span class="errorMessage">1</span>
+        </div>
+    </div>
+    <div class="panel panel-warning addDiv">
+        <div class="panel-heading">单号录入</div>
+        <div class="panel-body">
+            <table class="addTable">
+                <tr>
+                    <td class="redText">交付时间</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.deliveryTime" type="date" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">公司</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.company" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">业务员</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.operator" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>派单员</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.dispatcher" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">提货地址</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.pickUpAddress" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">送货地址</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.shippingAddress" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">入仓单号</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.warehousingNumber" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>公司单号</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.companyOrderNumber" type="" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">总费用</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.totalFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>基础费用</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.basicFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>高速费</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.expresswayFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>押夜费</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.overnightFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>搬运费</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.carryFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>过磅费</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.weighFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>其它费用</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.otherFee" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">司机</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.driver" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="redText">货物信息</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.cargoInformation" type="text" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td>备注</td>
+                    <td><input  @keyup.enter="add" v-model.trim="bean.remarks" type="text" class="form-control"></td>
+                </tr>
+                <tr class="submitTR">
+                    <td colspan="2" align="center">
+                        <a href="#nowhere"  @click="add" class="btn btn-success">提交</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

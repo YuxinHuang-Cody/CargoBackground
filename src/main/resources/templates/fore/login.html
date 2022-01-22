@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="/js/jquery/2.0.0/jquery.min.js"></script>
+    <link href="/css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap/3.3.6/bootstrap.min.js"></script>
+    <script src="/js/vue/2.5.16/vue.min.js"></script>
+    <script src="/js/axios/0.17.1/axios.min.js"></script>
+    <script src="/js/moment/2.22.2/moment.js"></script> <!-- vue.js 格式化日期用的 -->
+    <link href="/css/back/style.css" rel="stylesheet">
+    <link href="/css/fore/style.css" rel="stylesheet">
+    <script>
+        $(function(){
+            var data4Vue = {
+                uri:'forelogin',
+                result: [],
+                user:{name:'', password:''}
+            };
+            //ViewModel
+            var vue = new Vue({
+                el: '#loginDiv',
+                data: data4Vue,
+                // mounted:function(){
+                //     linkDefaultActions();
+                // },
+                methods: {
+                    login:function(){
+                        var url =  this.uri;
+                        if(0==this.user.name.length){
+                            $("span.errorMessage").html("请输入用户名");
+                            $("div.loginErrorMessageDiv").css("visibility","visible");
+                            return;
+                        }
+                        if(0==this.user.password.length){
+                            $("span.errorMessage").html("请输入密码");
+                            $("div.loginErrorMessageDiv").css("visibility","visible");
+                            return;
+                        }
+
+                        axios.post(url,this.user).then(function(response) {
+                            var result = response.data;
+                            if(result.code==0){
+                                location.href="home";
+                            }
+                            else{
+                                $("span.errorMessage").html(result.message);
+                                $("div.loginErrorMessageDiv").css("visibility","visible");
+                            }
+                        });
+                    }
+                }
+            });
+
+            var left = window.innerWidth/2-162;
+            $("div.loginSmallDiv").css("left",left);
+        })
+    </script>
+</head>
+<body>
+<!--    <div th:fragment="html">-->
+        <div id="loginDiv" style="position: absolute;">
+            <div id="loginSmallDiv" class="loginSmallDiv">
+                <div class="loginErrorMessageDiv">
+                    <div class="alert alert-danger" >
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                        <span class="errorMessage">22</span>
+                    </div>
+                </div>
+
+                <div class="login_acount_text">账户登录</div>
+                <div class="loginInput " >
+                        <span class="loginInputIcon ">
+                            <span class=" glyphicon glyphicon-user"></span>
+                        </span>
+                    <input v-model="user.name" placeholder="账户" type="text">
+                </div>
+
+                <div class="loginInput " >
+                        <span class="loginInputIcon ">
+                            <span class=" glyphicon glyphicon-lock"></span>
+                        </span>
+                    <input v-model="user.password" type="password" placeholder="密码" type="text">
+                </div>
+                <div style="margin-top:20px">
+                    <button class="btn btn-block redButton" type="button" @click="login">登录</button>
+                </div>
+            </div>
+        </div>
+<!--    </div>-->
+</body>
+</html>
