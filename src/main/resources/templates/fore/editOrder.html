@@ -124,81 +124,81 @@
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(this.bean.basicFee==null){
-                        this.bean.basicFee=0;
-                    }
-                    if(this.bean.carryFee==null){
-                        this.bean.carryFee=0;
-                    }
-                    if(this.bean.otherFee==null){
-                        this.bean.otherFee=0;
-                    }
-                    if(this.bean.weighFee==null){
-                        this.bean.weighFee=0;
-                    }
-                    if(this.bean.expresswayFee==null){
-                        this.bean.expresswayFee=0;
-                    }
-                    if(this.bean.overnightFee==null){
-                        this.bean.overnightFee=0;
-                    }
                     var regNumber= /^[0-9]+([\.][0-9]{1,3})?$/;
-                    if(!regNumber.test(this.bean.totalFee)){
+                    if(this.bean.totalFee!=null && !regNumber.test(this.bean.totalFee)){
                         $("span.errorMessage").html("总费用需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(!regNumber.test(this.bean.basicFee)){
+                    if(this.bean.basicFee!=null && !regNumber.test(this.bean.basicFee)){
                         $("span.errorMessage").html("基础费用需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(!regNumber.test(this.bean.expresswayFee)){
+                    if(this.bean.expresswayFee!=null && !regNumber.test(this.bean.expresswayFee)){
                         $("span.errorMessage").html("高速费需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(!regNumber.test(this.bean.overnightFee)){
+                    if(this.bean.overnightFee!=null && !regNumber.test(this.bean.overnightFee)){
                         $("span.errorMessage").html("押夜费需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(!regNumber.test(this.bean.carryFee)){
+                    if(this.bean.carryFee!=null && !regNumber.test(this.bean.carryFee)){
                         $("span.errorMessage").html("搬运费需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(!regNumber.test(this.bean.weighFee)){
+                    if(this.bean.weighFee!=null && !regNumber.test(this.bean.weighFee)){
                         $("span.errorMessage").html("过磅费需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    if(!regNumber.test(this.bean.otherFee)){
+                    if(this.bean.otherFee!=null && !regNumber.test(this.bean.otherFee)){
                         $("span.errorMessage").html("其它费用需要为数字");
                         $("div.orderErrorMessageDiv").css("visibility","visible");
                         return;
                     }
-                    var url = "order/"+this.bean.id;
                     //axios.js 上传文件要用 formData 这种方式
                     var formData = new FormData();
                     formData.append("deliveryTime", this.bean.deliveryTime);
                     formData.append("company", this.bean.company);
                     formData.append("operator", this.bean.operator);
-                    formData.append("dispatcher", this.bean.dispatcher);
+                    if(this.bean.dispatcher!=null){
+                        formData.append("dispatcher", this.bean.dispatcher);
+                    }
                     formData.append("pickUpAddress", this.bean.pickUpAddress);
                     formData.append("shippingAddress", this.bean.shippingAddress);
                     formData.append("warehousingNumber", this.bean.warehousingNumber);
-                    formData.append("companyOrderNumber", this.bean.companyOrderNumber);
+                    if(this.bean.companyOrderNumber!=null){
+                        formData.append("companyOrderNumber", this.bean.companyOrderNumber);
+                    }
                     formData.append("totalFee", this.bean.totalFee);
-                    formData.append("expresswayFee", this.bean.expresswayFee);
-                    formData.append("overnightFee", this.bean.overnightFee);
-                    formData.append("basicFee", this.bean.basicFee);
-                    formData.append("carryFee", this.bean.carryFee);
-                    formData.append("weighFee", this.bean.weighFee);
-                    formData.append("otherFee", this.bean.otherFee);
+                    if(this.bean.basicFee!=null){
+                        formData.append("basicFee", this.bean.basicFee);
+                    }
+                    if(this.bean.carryFee!=null){
+                        formData.append("carryFee", this.bean.carryFee);
+                    }
+                    if(this.bean.otherFee!=null){
+                        formData.append("otherFee", this.bean.otherFee);
+                    }
+                    if(this.bean.weighFee!=null){
+                        formData.append("weighFee", this.bean.weighFee);
+                    }
+                    if(this.bean.expresswayFee!=null){
+                        formData.append("expresswayFee", this.bean.expresswayFee);
+                    }
+                    if(this.bean.overnightFee!=null){
+                        formData.append("overnightFee", this.bean.overnightFee);
+                    }
                     formData.append("driver", this.bean.driver);
                     formData.append("cargoInformation", this.bean.cargoInformation);
-                    formData.append("remarks", this.bean.remarks);
+                    if(this.bean.remarks!=null){
+                        formData.append("remarks", this.bean.remarks);
+                    }
+                    var url = "order/"+this.bean.id;
                     axios.post(url,formData).then(function(response){
                         location.href="home";
                     });

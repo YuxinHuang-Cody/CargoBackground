@@ -15,6 +15,9 @@ div.editDiv{
 	margin:0px auto;
 	
 }
+span.errorMessage{
+	text-align:center;
+}
 td.redText{
 	color: #f16a17;
 }

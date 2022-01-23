@@ -78,6 +78,7 @@ div.searchDiv input {
 	outline:none;
 }
 
+
 div.searchDiv button {
 	width: 110px;
 	border: 1px solid transparent;
@@ -447,6 +448,11 @@ div.loginDivInProductPage {
 	padding: 60px 25px 80px 25px;
 }
 
+div.in-the-middle {
+	position: absolute;
+	width: 300px;
+}
+
 div.loginSmallDiv {
 	background-color: white;
 	position: absolute;
@@ -465,6 +471,7 @@ div.loginErrorMessageDiv {
 }
 
 div.orderErrorMessageDiv {
+	height: 55px;
 	width: 300px;
 	visibility: hidden;
 }
