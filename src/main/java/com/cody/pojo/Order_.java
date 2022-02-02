@@ -1,9 +1,8 @@
 package com.cody.pojo;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
@@ -14,6 +13,7 @@ import java.util.Objects;
  * @Date 2022/1/14
  */
 @Entity
+@Document(indexName="work", type="order")
 public class Order_ {
     private int id;
     private Date deliveryTime;
@@ -37,6 +37,8 @@ public class Order_ {
 
     @Id
     @Column(name = "id")
+    //save后会更新bean中字段的属性
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }

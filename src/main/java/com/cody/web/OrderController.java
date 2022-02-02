@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 类功能描述
@@ -24,7 +25,7 @@ public class OrderController {
     @GetMapping("/order")
     public Page4Navigator<Order_> list(@RequestParam(value = "start", defaultValue = "0") int start, @RequestParam(value = "size", defaultValue = "15") int size) throws Exception {
         start = start<0?0:start;
-        Page4Navigator<Order_> page =orderService.list(start, size, 15);  //5表示导航分页最多有5个，像 [1,2,3,4,5] 这样
+        Page4Navigator<Order_> page =orderService.list(start, size, 15);  //15表示导航分页最多有15个，像 [1,2,3,4,5] 这样
         return page;
     }
 
@@ -54,5 +55,13 @@ public class OrderController {
     public String edit(Order_ bean, HttpServletRequest request) throws Exception {
         orderService.update(bean);
         return null;
+    }
+
+    @PostMapping("/search")
+    public Page4Navigator<Order_> search(String keyword) throws Exception {
+        if(null==keyword){
+            keyword = "";
+        }
+        return orderService.search(keyword,0,20);
     }
 }
